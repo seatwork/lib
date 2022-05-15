@@ -1,1 +1,48 @@
-class Waterfall{constructor(t,i=3,n=10){this.container=document.querySelector(t),this.container.style.position="relative",this.columnCount=i,this.spacing=n,this.columnCache=new Array(this.columnCount),this._init()}render(){this._init();const t=this.container.children;for(let i=0;i<t.length;i++)this.add(t[i])}add(t){const i=this._findLowestColumn();t.transition=t.style.transition,t.style.transition="none",t.style.position="absolute",t.style.left=i.x+"px",t.style.top=i.y+"px",t.style.width=this.columnWidth+"px",this.columnCache[i.i]=i.y+t.offsetHeight,t.style.transition=t.transition;const n=Math.max.apply(null,this.columnCache);this.container.style.height=n+"px"}_init(){this.columnCache.fill(0),this.columnWidth=(this.container.offsetWidth-this.spacing*(this.columnCount-1))/this.columnCount}_findLowestColumn(){const t=Math.min.apply(null,this.columnCache),i=this.columnCache.indexOf(t);return{i:i,x:i>0?i*(this.columnWidth+this.spacing):0,y:t>0?t+this.spacing:0}}}
+/**
+ * A super lightweight library for waterfall layout.
+ */
+class Waterfall {
+  constructor(selector, columnCount = 3, spacing = 10) {
+    this.container = document.querySelector(selector)
+    this.container.style.position = 'relative'
+    this.columnCount = columnCount
+    this.spacing = spacing
+    this.columnCache = new Array(this.columnCount)
+    this._init()
+  }
+  render() {
+    this._init()
+    const items = this.container.children
+    for (let i = 0; i < items.length; i++) {
+      this.add(items[i])
+    }
+  }
+  add(el) {
+    const column = this._findLowestColumn()
+    el.transition = el.style.transition
+    el.style.transition = 'none' // 动画影响 offsetHeight 的获取
+    el.style.position = 'absolute'
+    el.style.left = column.x + 'px'
+    el.style.top = column.y + 'px'
+    el.style.width = this.columnWidth + 'px'
+
+    this.columnCache[column.i] = column.y + el.offsetHeight
+    el.style.transition = el.transition
+
+    const max = Math.max.apply(null, this.columnCache)
+    this.container.style.height = max + 'px'
+  }
+  _init() {
+    this.columnCache.fill(0)
+    this.columnWidth = (this.container.offsetWidth - this.spacing * (this.columnCount - 1)) / this.columnCount
+  }
+  _findLowestColumn() {
+    const min = Math.min.apply(null, this.columnCache)
+    const index = this.columnCache.indexOf(min)
+    return {
+      i: index,
+      x: index > 0 ? index * (this.columnWidth + this.spacing) : 0,
+      y: min > 0 ? min + this.spacing : 0
+    }
+  }
+}

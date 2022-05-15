@@ -1,1 +1,38 @@
-function svg2png(t,e,n){void 0===n&&(n=e,e=1);const i=t.getBBox(),o=t.cloneNode(!0);o.setAttribute("xmlns","http://www.w3.org/2000/svg"),o.setAttribute("width",i.width*e),o.setAttribute("height",i.height*e);const a=(new XMLSerializer).serializeToString(o),g="data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(a))),s=new Image;s.src=g,s.crossOrigin="anonymous",s.onload=()=>{const t=document.createElement("canvas");t.width=s.width,t.height=s.height,t.getContext("2d").drawImage(s,0,0),n(t.toDataURL("image/png"))}}
+/**
+ * svg2png (c)2018 Cloudseat.net
+ * Released under the MIT License.
+ *
+ * @example
+ * svg2png(svg, callback)
+ * svg2png(svg, scale, callback)
+ */
+
+function svg2png(svg, scale, callback) {
+  if (callback === undefined) {
+    callback = scale
+    scale = 1
+  }
+
+  const box = svg.getBBox()
+  const clone = svg.cloneNode(true)
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+  clone.setAttribute('width', box.width * scale)
+  clone.setAttribute('height', box.height * scale)
+
+  const svgXml = new XMLSerializer().serializeToString(clone)
+  const encoded = btoa(decodeURIComponent(encodeURIComponent(svgXml)))
+  const base64 = 'data:image/svg+xml;base64,' + encoded
+
+  const image = new Image()
+  image.src = base64
+  image.crossOrigin = 'anonymous'
+  image.onload = () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = image.width
+    canvas.height = image.height
+
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(image, 0, 0)
+    callback(canvas.toDataURL('image/png'))
+  }
+}
