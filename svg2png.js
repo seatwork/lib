@@ -20,8 +20,7 @@ function svg2png(svg, scale, callback) {
   clone.setAttribute('height', box.height * scale)
 
   const svgXml = new XMLSerializer().serializeToString(clone)
-  const encoded = btoa(decodeURIComponent(encodeURIComponent(svgXml)))
-  const base64 = 'data:image/svg+xml;base64,' + encoded
+  const base64 = 'data:image/svg+xml;base64,' + toBase64(svgXml)
 
   const image = new Image()
   image.src = base64
@@ -35,4 +34,12 @@ function svg2png(svg, scale, callback) {
     ctx.drawImage(image, 0, 0)
     callback(canvas.toDataURL('image/png'))
   }
+}
+
+function toBase64(str) {
+  // first we use encodeURIComponent to get percent-encoded UTF-8,
+  // then we convert the percent encodings into raw bytes which
+  // can be fed into btoa.
+  return btoa(encodeURIComponent(str)
+    .replace(/%([0-9A-F]{2})/g, (_, m) => String.fromCharCode('0x' + m)));
 }
